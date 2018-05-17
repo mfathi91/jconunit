@@ -53,15 +53,15 @@ class JConUnitTest {
 
     @Test
     void assertTimeout_violateTimeout() {
-        Executable executable = Executable.of(() -> sleepMillis(1000), 10);
+        Executable executable = Executable.of(() -> sleepMillis(100), 10);
         assertThrows(AssertionError.class, () ->
-                JConUnit.assertTimeout(Duration.ofMillis(500), executable));
+                JConUnit.assertTimeout(Duration.ofMillis(50), executable));
     }
 
     @Test
     void assertTimeout() {
-        Executable executable = Executable.of(() -> sleepMillis(900), 50);
-        JConUnit.assertTimeout(Duration.ofMillis(1000), executable);
+        Executable executable = Executable.of(() -> sleepMillis(90), 50);
+        JConUnit.assertTimeout(Duration.ofMillis(100), executable);
     }
 
 }
