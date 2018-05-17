@@ -4,7 +4,8 @@ import java.time.Duration;
 import java.util.Objects;
 
 /**
- * A data representer class. The main purpose of this class is to To use methods of
+ * A data representer class. The main purpose of this class is to aggregate
+ * separated fields that are used for concurrent execution. To use methods of
  * JConUnit class like {@link JConUnit#assertTimeout(Duration, Executable)},
  * creating an instance of this class is mandatory.
  *
@@ -54,10 +55,16 @@ public final class Executable {
         this.numThreads = numThreads;
     }
 
+    /**
+     * Returns the {@code runnable} instance.
+     */
     public Runnable getRunnable() {
         return runnable;
     }
 
+    /**
+     * Returns number of threads of this {@code Executable}.
+     */
     public int getNumThreads() {
         return numThreads;
     }
