@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.github.mfathi91</groupId>
+    <artifactId>jconunit</artifactId>
+    <version>1.0.0</version>
+
+    <name>jconunit</name>
+    <!-- FIXME change it to the project's website -->
+    <url>http://www.example.com</url>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <java-version>1.8</java-version>
+        <maven-compiler-version>3.7.0</maven-compiler-version>
+        <maven-surefire-plugin-version>2.21.0</maven-surefire-plugin-version>
+        <junit-jupiter>5.2.0</junit-jupiter>
+        <junit-platform-surefire-provider>1.2.0</junit-platform-surefire-provider>
+        <mockito-version>2.18.3</mockito-version>
+    </properties>
+
+    <dependencies>
+        <!-- JUnit -->
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-engine</artifactId>
+            <version>${junit-jupiter}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- Mockito -->
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+            <version>${mockito-version}</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <!-- Maven compiler plugin -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>${maven-compiler-version}</version>
+                <configuration>
+                    <source>${java-version}</source>
+                    <target>${java-version}</target>
+                </configuration>
+            </plugin>
+            <!-- Maven surefile plugin for JUnit 5 -->
+            <plugin>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>${maven-surefire-plugin-version}</version>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.junit.platform</groupId>
+                        <artifactId>junit-platform-surefire-provider</artifactId>
+                        <version>${junit-platform-surefire-provider}</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.junit.jupiter</groupId>
+                        <artifactId>junit-jupiter-engine</artifactId>
+                        <version>${junit-jupiter}</version>
+                    </dependency>
+                </dependencies>
+            </plugin>
+        </plugins>
+    </build>
+</project>
