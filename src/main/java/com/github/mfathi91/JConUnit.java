@@ -3,6 +3,12 @@ package com.github.mfathi91;
 import java.time.Duration;
 import java.util.Objects;
 
+/**
+ * This class provides static methods to provide concurrent execution
+ * utilities.
+ *
+ * <p>This class is stateless and thread-safe.
+ */
 public final class JConUnit {
 
     /**
@@ -41,7 +47,7 @@ public final class JConUnit {
      *
      * <p>precision of timeout calculating is milliseconds.
      *
-     * @param duration           reference timeout to check, not null
+     * @param duration   reference timeout to check, not null
      * @param executable instance of {@link Executable}, not null
      */
     public static void assertTimeout(Duration duration, Executable executable) {

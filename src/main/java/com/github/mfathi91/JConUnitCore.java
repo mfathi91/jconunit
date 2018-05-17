@@ -8,6 +8,11 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+/**
+ * Provides static package-priavate methods for other classes.
+ *
+ * <p>This class is stateless and threa-safe.
+ */
 final class JConUnitCore {
 
     /**
