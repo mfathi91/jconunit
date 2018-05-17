@@ -57,7 +57,7 @@ final class JConUnitCore {
                 try {
                     start.await();
                 } catch (InterruptedException e) {
-                    throw new UnknownConcurrentExecutionException(e);
+                    throwAsUncheckedException(e);
                 }
                 try {
                     task.run();
@@ -79,7 +79,9 @@ final class JConUnitCore {
                 throwAsUncheckedException(exceptions.get(0));
             return Duration.ofNanos(endNanos - startNanos);
         } catch (InterruptedException e) {
-            throw new UnknownConcurrentExecutionException(e);
+            throwAsUncheckedException(e);
+            // This wil be never executed
+            return null;
         }
     }
 
