@@ -9,14 +9,53 @@
     <version>1.0.0</version>
 
     <name>jconunit</name>
-    <!-- FIXME change it to the project's website -->
-    <url>http://www.example.com</url>
+
+    <description>This library is able to facilitate unit testing in concurrent environment.</description>
+    <url>https://github.com/mfathi91/jconunit</url>
+
+    <licenses>
+        <license>
+            <name>MIT License</name>
+            <url>https://opensource.org/licenses/mit-license.php</url>
+        </license>
+    </licenses>
+
+    <developers>
+        <developer>
+            <name>Mahmoud Fathi</name>
+            <email>m.fathi1991@gmail.com</email>
+            <organization>none</organization>
+            <organizationUrl>https://github.com/mfathi91</organizationUrl>
+        </developer>
+    </developers>
+
+    <scm>
+        <connection>scm:git:git@github.com:mfathi91/jconunit.git</connection>
+        <developerConnection>scm:git:git@github.com:mfathi91/jconunit.git</developerConnection>
+        <url>https://github.com/mfathi91/jconunit.git</url>
+    </scm>
+
+    <distributionManagement>
+        <snapshotRepository>
+            <id>ossrh</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+        </snapshotRepository>
+        <repository>
+            <id>ossrh</id>
+            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+        </repository>
+    </distributionManagement>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <java-version>1.8</java-version>
         <maven-compiler-version>3.7.0</maven-compiler-version>
+        <maven-source-plugin-version>3.0.1</maven-source-plugin-version>
+        <maven-javadoc-plugin-version>3.0.0</maven-javadoc-plugin-version>
+        <nexus-staging-plugin-version>1.6.8</nexus-staging-plugin-version>
+        <cobertura-maven-plugin-version>2.7</cobertura-maven-plugin-version>
         <maven-surefire-plugin-version>2.21.0</maven-surefire-plugin-version>
+        <maven-gpg-plugin-version>1.6</maven-gpg-plugin-version>
         <junit-jupiter>5.2.0</junit-jupiter>
         <junit-platform-surefire-provider>1.2.0</junit-platform-surefire-provider>
         <mockito-version>2.18.3</mockito-version>
@@ -52,6 +91,7 @@
                     <target>${java-version}</target>
                 </configuration>
             </plugin>
+
             <!-- Maven surefile plugin for JUnit 5 -->
             <plugin>
                 <artifactId>maven-surefire-plugin</artifactId>
@@ -69,6 +109,93 @@
                     </dependency>
                 </dependencies>
             </plugin>
+
+            <!-- Source plugin -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <version>${maven-source-plugin-version}</version>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- Javadoc plugin -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>${maven-javadoc-plugin-version}</version>
+                <executions>
+                    <execution>
+                        <id>attach-javadocs</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- Nexus staging plugin -->
+            <plugin>
+                <groupId>org.sonatype.plugins</groupId>
+                <artifactId>nexus-staging-maven-plugin</artifactId>
+                <version>${nexus-staging-plugin-version}</version>
+                <extensions>true</extensions>
+                <configuration>
+                    <serverId>ossrh</serverId>
+                    <nexusUrl>https://oss.sonatype.org/</nexusUrl>
+                    <autoReleaseAfterClose>true</autoReleaseAfterClose>
+                </configuration>
+            </plugin>
+
+            <!-- Cobertura (code coverage) plugin -->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>cobertura-maven-plugin</artifactId>
+                <version>${cobertura-maven-plugin-version}</version>
+                <configuration>
+                    <formats>
+                        <format>html</format>
+                        <format>xml</format>
+                    </formats>
+                    <check/>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
+    <!-- A profile to enable GPG plugin only in a release -->
+    <profiles>
+        <profile>
+            <id>release-sign-artifacts</id>
+            <activation>
+                <property>
+                    <name>performRelease</name>
+                    <value>true</value>
+                </property>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-gpg-plugin</artifactId>
+                        <version>${maven-gpg-plugin-version}</version>
+                        <executions>
+                            <execution>
+                                <id>sign-artifacts</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>sign</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>
