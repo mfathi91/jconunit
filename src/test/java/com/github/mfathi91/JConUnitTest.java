@@ -14,6 +14,14 @@ class JConUnitTest {
         return mock(Runnable.class);
     }
 
+    private void throwRuntimeException() {
+        throw new RuntimeException();
+    }
+
+    private void throwIllegalArgException() {
+        throw new IllegalArgumentException();
+    }
+
     private void sleepMillis(long millis) {
         try {
             TimeUnit.MILLISECONDS.sleep(millis);
@@ -30,9 +38,7 @@ class JConUnitTest {
 
     @Test
     void concurrentExecute_throwAnException() {
-        Executable executable = Executable.of(() -> {
-            throw new RuntimeException();
-        }, 5);
+        Executable executable = Executable.of(this::throwRuntimeException, 5);
         assertThrows(RuntimeException.class, () ->
                 JConUnit.concurrentExecute(executable));
     }
@@ -63,5 +69,56 @@ class JConUnitTest {
         Executable executable = Executable.of(() -> sleepMillis(90), 50);
         JConUnit.assertTimeout(Duration.ofMillis(100), executable);
     }
+    //--------------------------------------------------------------------
 
+    @Test
+    void assertDoesNotThrowsException_executable_null() {
+        assertThrows(NullPointerException.class, () ->
+                JConUnit.assertDoesNotThrowException(null));
+    }
+
+    @Test
+    void assertDoesNotThrowsException_throwException() {
+        Executable executable = Executable.of(this::throwRuntimeException, 5);
+        assertThrows(RuntimeException.class, () ->
+                JConUnit.assertDoesNotThrowException(executable));
+    }
+
+    @Test
+    void assertDoesNotThrowsException() {
+        JConUnit.assertDoesNotThrowException(Executable.of(() -> sleepMillis(2), 5));
+    }
+    //--------------------------------------------------------------------
+
+    @Test
+    void assertThrows_exception_null() {
+        assertThrows(NullPointerException.class, () ->
+                JConUnit.assertThrows(null, Executable.of(mockedRunnableSimple(), 4)));
+    }
+
+    @Test
+    void assertThrows_executable_null() {
+        assertThrows(NullPointerException.class, () ->
+                JConUnit.assertThrows(NullPointerException.class, null));
+    }
+
+    @Test
+    void assertThrows_differentExpectedException() {
+        Executable executable = Executable.of(this::throwIllegalArgException, 5);
+        assertThrows(AssertionError.class, () ->
+                JConUnit.assertThrows(NullPointerException.class, executable));
+    }
+
+    @Test
+    void assertThrows_noException() {
+        Executable executable = Executable.of(() -> sleepMillis(1), 5);
+        assertThrows(AssertionError.class, () ->
+                JConUnit.assertThrows(NullPointerException.class, executable));
+    }
+
+    @Test
+    void assertThrows_ok() {
+        Executable executable = Executable.of(this::throwIllegalArgException, 5);
+        JConUnit.assertThrows(IllegalArgumentException.class, executable);
+    }
 }
