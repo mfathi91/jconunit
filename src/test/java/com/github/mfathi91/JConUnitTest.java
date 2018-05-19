@@ -3,6 +3,9 @@ package com.github.mfathi91;
 import org.junit.jupiter.api.Test;
 
 import java.time.Duration;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -10,7 +13,8 @@ import static org.mockito.Mockito.mock;
 
 class JConUnitTest {
 
-    private Runnable mockedRunnableSimple() {
+    // A few helper methods
+    private Runnable mockedRunnable() {
         return mock(Runnable.class);
     }
 
@@ -30,95 +34,107 @@ class JConUnitTest {
         }
     }
 
-    @Test
-    void concurrentExecute_executable_null() {
-        assertThrows(NullPointerException.class, () ->
-                JConUnit.concurrentExecute(null));
-    }
-
-    @Test
-    void concurrentExecute_throwAnException() {
-        Executable executable = Executable.of(this::throwRuntimeException, 5);
-        assertThrows(RuntimeException.class, () ->
-                JConUnit.concurrentExecute(executable));
+    private List<Runnable> listOf(Runnable... runnables) {
+        return Arrays.asList(runnables);
     }
     //--------------------------------------------------------------------
 
     @Test
     void assertTimeout_duration_null() {
-        Executable executable = Executable.of(mockedRunnableSimple(), 1);
         assertThrows(NullPointerException.class, () ->
-                JConUnit.assertTimeout(null, executable));
+                JConUnit.assertTimeout(null, listOf(mockedRunnable())));
     }
 
     @Test
-    void assertTimeout_executable_null() {
+    void assertTimeout_runnables_null() {
         assertThrows(NullPointerException.class, () ->
                 JConUnit.assertTimeout(Duration.ofSeconds(1), null));
     }
 
     @Test
+    void assertTimeout_runnables_containNull() {
+        List<Runnable> runnables = listOf(mockedRunnable(), null, mockedRunnable());
+        assertThrows(NullPointerException.class, () ->
+                JConUnit.assertTimeout(Duration.ofSeconds(1), runnables));
+    }
+
+    @Test
     void assertTimeout_violateTimeout() {
-        Executable executable = Executable.of(() -> sleepMillis(100), 10);
+        List<Runnable> runnables = Collections.nCopies(10, () -> sleepMillis(10));
         assertThrows(AssertionError.class, () ->
-                JConUnit.assertTimeout(Duration.ofMillis(50), executable));
+                JConUnit.assertTimeout(Duration.ofMillis(5), runnables));
     }
 
     @Test
     void assertTimeout() {
-        Executable executable = Executable.of(() -> sleepMillis(90), 50);
-        JConUnit.assertTimeout(Duration.ofMillis(100), executable);
+        List<Runnable> runnables = Collections.nCopies(50, () -> sleepMillis(5));
+        JConUnit.assertTimeout(Duration.ofMillis(100), runnables);
     }
     //--------------------------------------------------------------------
 
     @Test
-    void assertDoesNotThrowsException_executable_null() {
+    void assertDoesNotThrowsException_runnables_null() {
         assertThrows(NullPointerException.class, () ->
                 JConUnit.assertDoesNotThrowException(null));
     }
 
     @Test
+    void assertDoesNotThrowsException_runnables_containsNull() {
+        List<Runnable> runnables = listOf(mockedRunnable(), null, mockedRunnable());
+        assertThrows(NullPointerException.class, () ->
+                JConUnit.assertDoesNotThrowException(runnables));
+    }
+
+    @Test
     void assertDoesNotThrowsException_throwException() {
-        Executable executable = Executable.of(this::throwRuntimeException, 5);
+        List<Runnable> runnables = Collections.nCopies(5, this::throwRuntimeException);
         assertThrows(RuntimeException.class, () ->
-                JConUnit.assertDoesNotThrowException(executable));
+                JConUnit.assertDoesNotThrowException(runnables));
     }
 
     @Test
     void assertDoesNotThrowsException() {
-        JConUnit.assertDoesNotThrowException(Executable.of(() -> sleepMillis(2), 5));
+        JConUnit.assertDoesNotThrowException(listOf(() -> sleepMillis(2)));
     }
     //--------------------------------------------------------------------
 
     @Test
     void assertThrows_exception_null() {
+        List<Runnable> runnables = Collections.nCopies(4, mockedRunnable());
         assertThrows(NullPointerException.class, () ->
-                JConUnit.assertThrows(null, Executable.of(mockedRunnableSimple(), 4)));
+                JConUnit.assertThrows(null, runnables));
     }
 
     @Test
-    void assertThrows_executable_null() {
+    void assertThrows_runnables_null() {
         assertThrows(NullPointerException.class, () ->
                 JConUnit.assertThrows(NullPointerException.class, null));
     }
 
     @Test
+    void assertThrows_runnables_containsNull() {
+        List<Runnable> runnables = listOf(mockedRunnable(), null, mockedRunnable());
+        assertThrows(NullPointerException.class, () ->
+                JConUnit.assertThrows(RuntimeException.class, runnables));
+    }
+
+    @Test
     void assertThrows_differentExpectedException() {
-        Executable executable = Executable.of(this::throwIllegalArgException, 5);
+        List<Runnable> runnables = Collections.nCopies(5, this::throwIllegalArgException);
         assertThrows(AssertionError.class, () ->
-                JConUnit.assertThrows(NullPointerException.class, executable));
+                JConUnit.assertThrows(NullPointerException.class, runnables));
     }
 
     @Test
     void assertThrows_noException() {
-        Executable executable = Executable.of(() -> sleepMillis(1), 5);
+        List<Runnable> runnables = Collections.nCopies(5, () -> sleepMillis(1));
         assertThrows(AssertionError.class, () ->
-                JConUnit.assertThrows(NullPointerException.class, executable));
+                JConUnit.assertThrows(NullPointerException.class, runnables));
     }
 
     @Test
     void assertThrows_ok() {
-        Executable executable = Executable.of(this::throwIllegalArgException, 5);
-        JConUnit.assertThrows(IllegalArgumentException.class, executable);
+        List<Runnable> runnables = Collections.nCopies(5, this::throwIllegalArgException);
+        JConUnit.assertThrows(IllegalArgumentException.class, runnables);
     }
 }

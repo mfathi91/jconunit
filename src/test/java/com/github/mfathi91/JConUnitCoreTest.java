@@ -45,6 +45,13 @@ class JConUnitCoreTest {
         Runnable task = () -> {
         };
         JConUnitCore.concurrentExecute(Collections.nCopies(10, task));
+        List<Runnable> runnables = Arrays.asList(this::run1, this::run2);
     }
+
+    public void run1(){
+
+    }
+
+    public void run2(){}
 
 }

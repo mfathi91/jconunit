@@ -13,7 +13,7 @@ Include the following to your dependency list:
 <dependency>
     <groupId>com.github.mfathi91</groupId>
     <artifactId>jconunit</artifactId>
-    <version>2.1.0</version>
+    <version>3.0.0</version>
     <scope>test</scope>
 </dependency>
 ```
@@ -23,9 +23,11 @@ For instance one may use JConUnit like the following code:
 ```java
 @Tese
 public void junitTestMethod(){
-    Runnable task = () -> System.out.println("MyCustomRunnable");
-    Executable executable = Executable.of(task, 10);  // set task and number of threads to run the task
-    JConUnit.assertTimeout(Duration.ofMillis(100), executable);
+    ThreadSafeClass threadSafe = new ThreadSafeClass();
+    List<Runnable> runnables = Collections.nCopy(2, threadSafe::abcMethod);
+    // 'abcMethod' is designed to throw IllegalStateException when it is 
+    // accessed from multiple threads
+    JConUnit.assertThrows(IllegalStateException.class, runnables);
 }
 ```
 ### Requirements
