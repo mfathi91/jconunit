@@ -29,9 +29,7 @@ public final class JConUnit {
      */
     public static void concurrentExecute(Executable executable) {
         Objects.requireNonNull(executable, "executable");
-        JConUnitCore.concurrentExecute(
-                executable.getRunnable(),
-                executable.getNumThreads());
+        JConUnitCore.concurrentExecute(executable.getRunnables());
     }
 
     /**
@@ -75,9 +73,9 @@ public final class JConUnit {
         try {
             concurrentExecute(executable);
         } catch (Exception actualType) {
-            if(expectedType == actualType.getClass()){
+            if (expectedType == actualType.getClass()) {
                 return;
-            }else {
+            } else {
                 throw new AssertionError("Expected " + expectedType +
                         ", but " + actualType.getClass() + " was thrown");
             }
@@ -96,7 +94,7 @@ public final class JConUnit {
      * {@code duration}, an {@link AssertionError} with a suitable message will be
      * thrown.
      *
-     * <p>precision of timeout calculating is milliseconds.
+     * <p>Precision of timeout calculating is based on milliseconds.
      *
      * @param duration   reference timeout to check, not null
      * @param executable instance of {@link Executable}, not null
@@ -110,8 +108,7 @@ public final class JConUnit {
         Objects.requireNonNull(duration, "duration");
         Objects.requireNonNull(executable, "executable");
         Duration actualDuration = JConUnitCore.concurrentExecute(
-                executable.getRunnable(),
-                executable.getNumThreads());
+                executable.getRunnables());
         if (duration.compareTo(actualDuration) < 0) {
             throw new AssertionError("execution exceeded timeout of " + duration.toMillis()
                     + " ms by " + actualDuration.toMillis() + " ms");

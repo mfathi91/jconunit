@@ -1,6 +1,7 @@
 package com.github.mfathi91;
 
 import java.time.Duration;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -23,35 +24,34 @@ final class JConUnitCore {
     }
 
     /**
-     * Executes parameter {@code task} with {@code numThreads} separated threads
+     * Executes each one of {@code runnables} in a separated thread concurrently
      * and returns an instance of {@link Duration} as elapsed time for running
-     * runnable in all the threads.
+     * all of them.
      *
      * <p>If one or more subtype of {@link Exception} occurs during running
-     * {@code task}, one of them will be randomly thrown. It is noteworty that the
-     * thrown exception will be in the main thread that this method is called.
+     * any of the {@code runnables}, one of them will be randomly thrown. It is
+     * noteworty that the thrown exception will be in the main thread that this
+     * method is called.
      *
-     * @param task       instance of {@link Runnable} to run in {@code numThreads}
-     *                   separated threads, not null
-     * @param numThreads number of threads to create and run {@code task}
+     * @param runnables list of {@link Runnable}, not null
      * @return an instance of {@link Duration} that is elapsed time for running
      * runnable in all the threads
-     * @throws NullPointerException     if parameter {@code concurrentExecutable} is null
-     * @throws IllegalArgumentException if parameter {@code numThreads} less than 1
+     * @throws NullPointerException if parameter {@code runnables} is null
+     * @throws NullPointerException if parameter {@code runnables} contains null
      */
-    static Duration concurrentExecute(Runnable task, int numThreads) {
-        Objects.requireNonNull(task, "task");
-        if (numThreads < 1) {
-            throw new IllegalArgumentException(
-                    "number of threads cannot be nonpositive: " + numThreads);
+    static Duration concurrentExecute(List<Runnable> runnables) {
+        Objects.requireNonNull(runnables, "runnables");
+        if (runnables.contains(null)) {
+            throw new NullPointerException("runnables can not contain null");
         }
-        List<Exception> exceptions = new CopyOnWriteArrayList<>();
-        CountDownLatch ready = new CountDownLatch(numThreads);
-        CountDownLatch start = new CountDownLatch(1);
-        CountDownLatch done = new CountDownLatch(numThreads);
-        ExecutorService executor = Executors.newFixedThreadPool(numThreads);
 
-        for (int i = 0; i < numThreads; i++) {
+        List<Exception> exceptions = new CopyOnWriteArrayList<>();
+        CountDownLatch ready = new CountDownLatch(runnables.size());
+        CountDownLatch start = new CountDownLatch(1);
+        CountDownLatch done = new CountDownLatch(runnables.size());
+        ExecutorService executor = Executors.newFixedThreadPool(runnables.size());
+
+        for (Runnable runnable : runnables) {
             executor.execute(() -> {
                 ready.countDown();
                 try {
@@ -60,7 +60,7 @@ final class JConUnitCore {
                     throwAsUncheckedException(e);
                 }
                 try {
-                    task.run();
+                    runnable.run();
                 } catch (Exception exception) {
                     exceptions.add(exception);
                 } finally {

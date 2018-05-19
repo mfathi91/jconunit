@@ -34,13 +34,6 @@ class ExecutableTest {
     void getRunnable() {
         Runnable runnable = mockedRunnableSimple();
         Executable executable = Executable.of(runnable, 1);
-        assertEquals(runnable, executable.getRunnable());
+        assertEquals(runnable, executable.getRunnables().get(0));
     }
-
-    @Test
-    void getNumThreads() {
-        Executable executable = Executable.of(mockedRunnableSimple(), 61);
-        assertEquals(61, executable.getNumThreads());
-    }
-
 }

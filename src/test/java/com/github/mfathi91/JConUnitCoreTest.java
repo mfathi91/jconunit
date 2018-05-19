@@ -2,7 +2,12 @@ package com.github.mfathi91;
 
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
 
 class JConUnitCoreTest {
@@ -14,13 +19,15 @@ class JConUnitCoreTest {
     @Test
     void concurrentExecute_task_null() {
         assertThrows(NullPointerException.class, () ->
-                JConUnitCore.concurrentExecute(null, 1));
+                JConUnitCore.concurrentExecute(null));
     }
 
     @Test
-    void concurrentExecute_numThreads_nonpositive() {
-        assertThrows(IllegalArgumentException.class, () ->
-                JConUnitCore.concurrentExecute(mockedRunnableSimple(), 0));
+    void concurrentExecute_executable_containsNull() {
+        List<Runnable> runnables = new ArrayList<>();
+        runnables.addAll(Arrays.asList(mockedRunnableSimple(), null, mockedRunnableSimple()));
+        assertThrows(NullPointerException.class, () ->
+                JConUnitCore.concurrentExecute(runnables));
     }
 
     @Test
@@ -28,14 +35,16 @@ class JConUnitCoreTest {
         Runnable task = () -> {
             throw new IllegalArgumentException();
         };
+        List<Runnable> runnables = Collections.nCopies(10, task);
         assertThrows(IllegalArgumentException.class, () ->
-                JConUnitCore.concurrentExecute(task, 10));
+                JConUnitCore.concurrentExecute(runnables));
     }
 
     @Test
     void concurrentExecute_noException() {
-        Runnable task = () -> {};
-        JConUnitCore.concurrentExecute(task, 10);
+        Runnable task = () -> {
+        };
+        JConUnitCore.concurrentExecute(Collections.nCopies(10, task));
     }
 
 }
