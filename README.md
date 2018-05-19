@@ -13,7 +13,7 @@ Include the following to your dependency list:
 <dependency>
     <groupId>com.github.mfathi91</groupId>
     <artifactId>jconunit</artifactId>
-    <version>1.1.0</version>
+    <version>2.1.0</version>
     <scope>test</scope>
 </dependency>
 ```

@@ -1,7 +1,7 @@
 package com.github.mfathi91;
 
 import java.time.Duration;
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -37,25 +37,37 @@ public final class Executable {
             throw new IllegalArgumentException(
                     "numThread cannot be nonpositive: " + numThreads);
         }
-        List<Runnable> runnables = new ArrayList<>(numThreads);
-        for (int i = 0; i < numThreads; i++) runnables.add(runnable);
+        return new Executable(Collections.nCopies(numThreads, runnable));
+    }
+
+    /**
+     * Returns a new instance of {@link Executable}. This executable means that
+     * each element of the {@code runnables} list is intended to be executed in a
+     * distinct thread concurrently.
+     *
+     * @param runnables list of {@link Runnable} to run, not null
+     * @return an instance of {@link Executable}
+     * @throws NullPointerException if parameter {@code runnables} is null
+     * @throws NullPointerException if parameter {@code runnables} contains null
+     */
+    public static Executable of(List<Runnable> runnables) {
         return new Executable(runnables);
     }
 
     /**
      * Constructor.
      *
-     * @param runnables  list of all runnables that are intended to be run in
-     *                   separated threads. Each runnable will be run in a distinct
-     *                   thread
-     * @throws NullPointerException     if parameter {@code runnable} is null
-     * @throws IllegalArgumentException if parameter {@code numThreads} is less
-     *                                  than 1
+     * @param runnables list of all runnables that are intended to be run in
+     *                  separated threads. Each runnable will be run in a distinct
+     *                  thread
+     * @throws NullPointerException if parameter {@code runnable} is null
      */
     private Executable(List<Runnable> runnables) {
-        Objects.requireNonNull(runnables, "runnable");
-        runnables.removeIf(Objects::isNull);
-        this.runnables = new ArrayList<>(runnables);
+        Objects.requireNonNull(runnables, "runnables");
+        if (runnables.contains(null)) {
+            throw new NullPointerException("runnables can not contain null");
+        }
+        this.runnables = Collections.unmodifiableList(runnables);
     }
 
     /**
