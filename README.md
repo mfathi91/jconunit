@@ -19,13 +19,23 @@ Include the following to your dependency list:
 ```
 
 ### Usage
-For instance one may use JConUnit like the following code:
+For instance one may use JConUnit like the following codes:
 ```java
 @Tese
 public void junitTestMethod(){
     ThreadSafeClass threadSafe = new ThreadSafeClass();
-    List<Runnable> runnables = Collections.nCopy(2, threadSafe::abcMethod);
-    // 'abcMethod' is designed to throw IllegalStateException when it is 
+    List<Runnable> runnables = Collections.nCopy(10, threadSafe::foo);
+    // 'foo' method is designed to not throw any exception in multithreaded environment
+    JConUnit.assertDoesNotThrowException(runnables);
+}
+```
+or
+```java
+@Tese
+public void junitTestMethod(){
+    ThreadSafeClass threadSafe = new ThreadSafeClass();
+    List<Runnable> runnables = Collections.nCopy(2, threadSafe::bar);
+    // 'bar' method is designed to throw IllegalStateException when it is 
     // accessed from multiple threads
     JConUnit.assertThrows(IllegalStateException.class, runnables);
 }
