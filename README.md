@@ -1,4 +1,8 @@
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.github.mfathi91/jconunit/badge.svg)](http://search.maven.org/#search|ga|1|com.github.mfathi91/jconunit)
+<a href="https://scan.coverity.com/projects/mfathi91-jconunit">
+  <img alt="Coverity Scan Build Status"
+       src="https://scan.coverity.com/projects/21151/badge.svg"/>
+</a>
 
 # JConUnit
 
